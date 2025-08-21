@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 import uuid
@@ -7,16 +6,37 @@ import hashlib
 
 # Create your models here.
 
+class User(models.Model):
+    """Modelo User customizado conforme solicitado pelo professor"""
+    username = models.CharField(max_length=150, unique=True)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=30, blank=True)
+    last_name = models.CharField(max_length=30, blank=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(auto_now_add=True)
+    last_login = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
+        ordering = ['-date_joined']
+
+    def __str__(self):
+        return self.username
+
 class Member(models.Model):
     """Modelo baseado no diagrama - Membro do clube"""
-    # Relacionamento com usuário Django (para login)
+    # Relacionamento com usuário customizado
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     
     # Campos principais do diagrama
     full_name = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=20, blank=True)
-    password_hash = models.CharField(max_length=255, blank=True)  # Para casos especiais
+    password_hash = models.CharField(max_length=255, blank=True)
     
     # Dados profissionais
     area_tecnologia = models.CharField(max_length=50, blank=True)
@@ -142,7 +162,7 @@ class Evento(models.Model):
 class Ticket(models.Model):
     """Modelo baseado no diagrama - Ingressos para eventos"""
     owner = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='tickets')
-    evento = models.ForeignKey(Evento, on_delete=models.CASCADE, related_name='tickets')  # Era "game"
+    evento = models.ForeignKey(Evento, on_delete=models.CASCADE, related_name='tickets')
     seat = models.CharField(max_length=20, blank=True)
     qr_code = models.CharField(max_length=100, unique=True)
     
