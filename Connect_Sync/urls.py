@@ -7,7 +7,6 @@ urlpatterns = [
     # URLs públicas
     path('', views.home_view, name='home'),
     path('planos/', views.plans_view, name='plans'),
-    path('plano/<int:plan_id>/', views.plan_detail_view, name='plan_detail'),
     path('plano/<int:plan_id>/cadastro/', views.signup_view, name='signup'),
     path('cadastro/sucesso/<int:subscription_id>/', views.subscription_success_view, name='subscription_success'),
     path('sobre/', views.about_view, name='about'),
