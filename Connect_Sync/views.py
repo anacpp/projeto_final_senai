@@ -4,6 +4,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_protect
+from django.utils import timezone
+from datetime import timedelta
+
 from .models import Plan, Member, Subscription
 
 def home_view(request):
@@ -268,6 +272,7 @@ def member_cancel_subscription_view(request):
         return redirect('connect_sync:member_subscription_manage')
 
 @require_POST
+@csrf_protect
 def member_delete_account_view(request):
     """View para o membro excluir sua própria conta"""
     member_id = request.session.get('member_id')
