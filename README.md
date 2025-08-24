@@ -6,7 +6,7 @@ Plataforma de Assinatura Corporativa para Empresas de Tecnologia
 
 O Connect-Sync é uma solução inovadora que ajuda empresas de tecnologia a oferecerem benefícios diferenciados aos seus colaboradores,criando engajamento, networking e acesso a oportunidades exclusivas.
 
-🛠️ Construído com
+## 🛠️ Construído com
 
 Python 3.10+
 
@@ -56,7 +56,7 @@ pip install django
 
 
 
-## Faça as migrações necessarias com:
+## ⚠️Faça migrações necessarias com :
 ```bash
 python manage.py migrate
 ```
