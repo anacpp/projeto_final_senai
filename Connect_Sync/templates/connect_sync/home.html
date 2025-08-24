@@ -1,0 +1,136 @@
+{% extends 'connect_sync/base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">
+                    <i class="fas fa-rocket"></i> Connect_Sync
+                </h1>
+                <p class="lead mb-4">
+                    A plataforma definitiva para profissionais de tecnologia se conectarem, 
+                    aprenderem e crescerem juntos.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="{% url 'connect_sync:plans' %}" class="btn btn-light btn-lg">
+                        <i class="fas fa-crown"></i> Ver Planos
+                    </a>
+                    <a href="{% url 'connect_sync:about' %}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-info-circle"></i> Saiba Mais
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="fas fa-users fa-10x opacity-25"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 h-100 card-hover">
+                    <div class="card-body">
+                        <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title">{{ stats.total_members }}</h3>
+                        <p class="card-text">Membros Ativos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 h-100 card-hover">
+                    <div class="card-body text-center">
+                        <i class="fas fa-crown fa-3x text-warning mb-3"></i>
+                        <h3 class="card-title">{{ stats.available_plans }}</h3>
+                        <p class="card-text">Planos Disponíveis</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 h-100 card-hover">
+                    <div class="card-body text-center">
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <h3 class="card-title">{{ stats.active_subscriptions }}</h3>
+                        <p class="card-text">Assinaturas Ativas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center mb-5">
+                <h2 class="display-5 fw-bold">Por que Connect_Sync?</h2>
+                <p class="lead">Descubra os benefícios de fazer parte da nossa comunidade tech</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100 card-hover">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Aprendizado Contínuo</h5>
+                        <p class="card-text">
+                            Acesso a tech talks, workshops e cursos exclusivos com 
+                            especialistas da indústria.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100 card-hover">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-network-wired fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Networking</h5>
+                        <p class="card-text">
+                            Conecte-se com outros profissionais, troque experiências 
+                            e construa sua rede de contatos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100 card-hover">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-rocket fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">Crescimento</h5>
+                        <p class="card-text">
+                            Acelere sua carreira com mentorias, oportunidades 
+                            exclusivas e conteúdo premium.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold mb-4">Pronto para começar?</h2>
+                <p class="lead mb-4">
+                    Junte-se a centenas de profissionais que já fazem parte da nossa comunidade.
+                </p>
+                                <a href="{% url 'connect_sync:plans' %}" class="btn btn-light btn-lg">
+                    <i class="fas fa-crown"></i> Nossos Planos
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,217 @@
+{% extends 'connect_sync/base.html' %}
+
+{% block title %}Meu Dashboard - Connect Sync{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Cabeçalho do Dashboard -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="text-primary mb-1">
+                        <i class="fas fa-tachometer-alt me-2"></i>
+                        Meu Dashboard
+                    </h2>
+                    <p class="text-muted mb-0">Bem-vindo, <strong>{{ member.full_name }}</strong>!</p>
+                </div>
+                <div>
+                    <a href="{% url 'connect_sync:logout' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-sign-out-alt me-1"></i>
+                        Sair
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Informações da Assinatura -->
+    <div class="row mb-4">
+        <div class="col-12">
+            {% if subscription %}
+            <div class="card bg-gradient border-0 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="mb-2">
+                                <i class="fas fa-crown me-2"></i>
+                                Plano {{ subscription.plan.name }}
+                            </h4>
+                            <p class="mb-1 opacity-75">Status: <span class="badge bg-success">{{ subscription.get_status_display }}</span></p>
+                            <p class="mb-0 opacity-75">
+                                <i class="fas fa-calendar me-1"></i>
+                                Próxima cobrança: {{ subscription.next_billing|date:"d/m/Y" }}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <div class="h2 mb-1">R$ {{ subscription.plan.price }}</div>
+                            <small class="opacity-75">por mês</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Nenhuma assinatura ativa encontrada.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Menu de Ações -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h5 class="text-primary mb-3">
+                <i class="fas fa-cogs me-2"></i>
+                Gerenciar Conta
+            </h5>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Editar Perfil -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="text-primary mb-3">
+                        <i class="fas fa-user-edit fa-3x"></i>
+                    </div>
+                    <h5 class="card-title">Editar Perfil</h5>
+                    <p class="card-text text-muted">Atualize suas informações pessoais e profissionais</p>
+                    <a href="{% url 'connect_sync:member_edit_personal' %}" class="btn btn-primary">
+                        <i class="fas fa-edit me-1"></i>
+                        Editar Dados
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Gerenciar Assinatura -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="text-success mb-3">
+                        <i class="fas fa-credit-card fa-3x"></i>
+                    </div>
+                    <h5 class="card-title">Minha Assinatura</h5>
+                    <p class="card-text text-muted">Altere seu plano, forma de pagamento ou cancele</p>
+                    <a href="{% url 'connect_sync:member_subscription_manage' %}" class="btn btn-success">
+                        <i class="fas fa-cog me-1"></i>
+                        Gerenciar Plano
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Histórico e Dados -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="text-info mb-3">
+                        <i class="fas fa-chart-line fa-3x"></i>
+                    </div>
+                    <h5 class="card-title">Meus Dados</h5>
+                    <p class="card-text text-muted">Visualize histórico e estatísticas da sua conta</p>
+                    <button class="btn btn-info" disabled>
+                        <i class="fas fa-chart-bar me-1"></i>
+                        Em Breve
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Informações da Conta -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0 bg-light">
+                <div class="card-body p-4">
+                    <h6 class="text-primary mb-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Informações da Conta
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Nome:</strong> {{ member.full_name }}</p>
+                            <p class="mb-2"><strong>Email:</strong> {{ member.email }}</p>
+                            <p class="mb-2"><strong>Telefone:</strong> {{ member.phone|default:"Não informado" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Área de Tecnologia:</strong> {{ member.area_tecnologia }}</p>
+                            <p class="mb-2"><strong>Empresa Atual:</strong> {{ member.empresa_atual|default:"Não informado" }}</p>
+                            <p class="mb-2"><strong>Membro desde:</strong> {{ member.created_at|date:"d/m/Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Ações Avançadas -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Zona de Perigo
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">
+                        Estas ações são irreversíveis. Tenha certeza antes de prosseguir.
+                    </p>
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                        <i class="fas fa-trash me-1"></i>
+                        Excluir Conta Permanentemente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação para Exclusão -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteAccountModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Confirmar Exclusão da Conta
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <h6 class="alert-heading">Atenção!</h6>
+                    Esta ação é <strong>irreversível</strong>. Ao confirmar:
+                </div>
+                <ul class="text-muted">
+                    <li>Sua conta será excluída permanentemente</li>
+                    <li>Todas as suas assinaturas serão canceladas</li>
+                    <li>Você perderá acesso a todos os benefícios</li>
+                    <li>Seus dados não poderão ser recuperados</li>
+                </ul>
+                <p class="mt-3 mb-0">
+                    <strong>Tem certeza que deseja excluir sua conta?</strong>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>
+                    Cancelar
+                </button>
+                <form method="post" action="{% url 'connect_sync:member_delete_account' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i>
+                        Sim, Excluir Conta
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

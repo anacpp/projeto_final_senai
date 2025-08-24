@@ -1,0 +1,168 @@
+{% extends 'connect_sync/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto                    <a href="{% url 'connect_sync:plans' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Escolher um Plano
+                    </a>            <!-- Header -->
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header bg-info text-white text-center">
+                    <h3 class="mb-0">
+                        <i class="fas fa-cog"></i> Gerenciar Assinatura
+                    </h3>
+                    <p class="mb-0">{{ member.full_name }}</p>
+                </div>
+            </div>
+            
+            <!-- Exibir mensagens -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% if subscription and subscription.status == 'active' %}
+            <!-- Assinatura Atual -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-crown"></i> Assinatura Atual</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Plano:</strong> {{ subscription.plan.name }}</p>
+                            <p><strong>Valor:</strong> R$ {{ subscription.plan.monthly_price }}/mês</p>
+                            <p><strong>Status:</strong> <span class="badge bg-success">Ativo</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Início:</strong> {{ subscription.started_at|date:"d/m/Y" }}</p>
+                            <p><strong>Próximo pagamento:</strong> {{ subscription.next_billing|date:"d/m/Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Trocar Plano -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0"><i class="fas fa-exchange-alt"></i> Trocar Plano</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">Escolha um novo plano para sua assinatura:</p>
+                    
+                    <form method="post" action="{% url 'connect_sync:subscription_change_plan' member.id %}">
+                        {% csrf_token %}
+                        <div class="row">
+                            {% for plan in all_plans %}
+                            <div class="col-md-4 mb-3">
+                                <div class="card border {% if plan.id == subscription.plan.id %}border-success{% else %}border-secondary{% endif %} h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-crown fa-2x {% if plan.name == 'Connect Bronze' %}plan-bronze{% elif plan.name == 'Connect Prata' %}plan-prata{% elif plan.name == 'Connect Ouro' %}plan-ouro{% endif %} mb-2"></i>
+                                        <h6 class="card-title">{{ plan.name }}</h6>
+                                        <p class="card-text">
+                                            <strong>R$ {{ plan.monthly_price }}</strong>/mês
+                                        </p>
+                                        
+                                        {% if plan.id == subscription.plan.id %}
+                                            <span class="badge bg-success">Atual</span>
+                                        {% else %}
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="new_plan_id" 
+                                                       value="{{ plan.id }}" id="plan{{ plan.id }}">
+                                                <label class="form-check-label" for="plan{{ plan.id }}">
+                                                    Escolher
+                                                </label>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="d-grid mt-3">
+                            <button type="submit" class="btn btn-warning" onclick="return confirm('Tem certeza que deseja trocar de plano?')">
+                                <i class="fas fa-exchange-alt"></i> Confirmar Troca de Plano
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Cancelar Assinatura -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-times-circle"></i> Cancelar Assinatura</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Atenção!</strong> Ao cancelar sua assinatura, você perderá acesso a todos os benefícios.
+                    </div>
+                    
+                    <form method="post" action="{% url 'connect_sync:subscription_cancel' member.id %}">
+                        {% csrf_token %}
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger" 
+                                    onclick="return confirm('Tem certeza que deseja cancelar sua assinatura? Esta ação não pode ser desfeita.')">
+                                <i class="fas fa-times-circle"></i> Cancelar Assinatura
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Excluir Conta -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-trash-alt"></i> Excluir Conta</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Perigo!</strong> Esta ação excluirá permanentemente sua conta e todos os dados associados.
+                    </div>
+                    
+                    <form method="post" action="{% url 'connect_sync:member_delete' member.id %}">
+                        {% csrf_token %}
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-dark" 
+                                    onclick="return confirm('ATENÇÃO: Esta ação é irreversível! Tem certeza que deseja excluir sua conta permanentemente?')">
+                                <i class="fas fa-trash-alt"></i> Excluir Conta Permanentemente
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            {% else %}
+            <!-- Sem Assinatura Ativa -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center p-5">
+                    <i class="fas fa-exclamation-circle fa-4x text-warning mb-3"></i>
+                    <h3>Nenhuma assinatura ativa</h3>
+                    <p class="text-muted">Você não possui uma assinatura ativa no momento.</p>
+                    <a href="{% url 'connect_sync:plans_list' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Assinar um Plano
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Botões de Navegação -->
+            <div class="text-center mt-4">
+                <a href="{% url 'connect_sync:member_profile' member.id %}" class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-arrow-left"></i> Voltar ao Perfil
+                </a>
+                <a href="{% url 'connect_sync:members_list' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-list"></i> Lista de Membros
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

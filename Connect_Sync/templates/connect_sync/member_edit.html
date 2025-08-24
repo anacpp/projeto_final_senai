@@ -1,0 +1,89 @@
+{% extends 'connect_sync/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-warning text-white text-center">
+                    <h3 class="mb-0">
+                        <i class="fas fa-edit"></i> Editar Perfil
+                    </h3>
+                </div>
+                <div class="card-body p-5">
+                    <!-- Exibir mensagens -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="full_name" class="form-label">Nome Completo *</label>
+                            <input type="text" class="form-control" id="full_name" name="full_name" 
+                                   value="{{ member.full_name }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   value="{{ member.email }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   value="{{ member.phone }}" placeholder="(11) 99999-9999">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="area_tecnologia" class="form-label">Área de Tecnologia *</label>
+                            <select class="form-select" id="area_tecnologia" name="area_tecnologia" required>
+                                <option value="">Selecione sua área</option>
+                                <option value="Frontend" {% if member.area_tecnologia == 'Frontend' %}selected{% endif %}>Frontend</option>
+                                <option value="Backend" {% if member.area_tecnologia == 'Backend' %}selected{% endif %}>Backend</option>
+                                <option value="Fullstack" {% if member.area_tecnologia == 'Fullstack' %}selected{% endif %}>Fullstack</option>
+                                <option value="Mobile" {% if member.area_tecnologia == 'Mobile' %}selected{% endif %}>Mobile</option>
+                                <option value="DevOps" {% if member.area_tecnologia == 'DevOps' %}selected{% endif %}>DevOps</option>
+                                <option value="Data Science" {% if member.area_tecnologia == 'Data Science' %}selected{% endif %}>Data Science</option>
+                                <option value="QA/Testes" {% if member.area_tecnologia == 'QA/Testes' %}selected{% endif %}>QA/Testes</option>
+                                <option value="UX/UI Design" {% if member.area_tecnologia == 'UX/UI Design' %}selected{% endif %}>UX/UI Design</option>
+                                <option value="Gestão de TI" {% if member.area_tecnologia == 'Gestão de TI' %}selected{% endif %}>Gestão de TI</option>
+                                <option value="Cybersecurity" {% if member.area_tecnologia == 'Cybersecurity' %}selected{% endif %}>Cybersecurity</option>
+                                <option value="Outro" {% if member.area_tecnologia == 'Outro' %}selected{% endif %}>Outro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="empresa_atual" class="form-label">Empresa Atual</label>
+                            <input type="text" class="form-control" id="empresa_atual" name="empresa_atual" 
+                                   value="{{ member.empresa_atual }}" placeholder="Nome da empresa (opcional)">
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="fas fa-save"></i> Salvar Alterações
+                            </button>
+                            <a href="{% url 'connect_sync:member_profile' member.id %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Informação sobre campos obrigatórios -->
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-info-circle"></i>
+                <strong>Informação:</strong> Os campos marcados com * são obrigatórios.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

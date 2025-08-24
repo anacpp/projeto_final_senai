@@ -1,0 +1,163 @@
+{% extends 'connect_sync/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Plano Selecionado -->
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4><i class="fas fa-crown"></i> Plano Selecionado</h4>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-crown fa-3x {% if plan.name == 'Connect Bronze' %}plan-bronze{% elif plan.name == 'Connect Prata' %}plan-prata{% elif plan.name == 'Connect Ouro' %}plan-ouro{% endif %}"></i>
+                    </div>
+                    <h3 class="card-title fw-bold">{{ plan.name }}</h3>
+                    <h2 class="text-primary">R$ {{ plan.monthly_price }}<small>/mês</small></h2>
+                    <p class="card-text">{{ plan.description }}</p>
+                </div>
+            </div>
+
+            <!-- Formulário de Cadastro -->
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-dark text-white">
+                    <h4><i class="fas fa-user-plus"></i> Complete seu Cadastro</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Mensagens -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="full_name" class="form-label">
+                                    <i class="fas fa-user"></i> Nome Completo *
+                                </label>
+                                <input type="text" class="form-control" id="full_name" name="full_name" 
+                                       placeholder="Digite seu nome completo" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope"></i> Email *
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       placeholder="seu@email.com" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">
+                                    <i class="fas fa-phone"></i> Telefone
+                                </label>
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       placeholder="(11) 99999-9999">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="area_tecnologia" class="form-label">
+                                    <i class="fas fa-code"></i> Área de Tecnologia *
+                                </label>
+                                <select class="form-select" id="area_tecnologia" name="area_tecnologia" required>
+                                    <option value="">Selecione sua área</option>
+                                    <option value="Frontend">Frontend</option>
+                                    <option value="Backend">Backend</option>
+                                    <option value="Full Stack">Full Stack</option>
+                                    <option value="Mobile">Mobile</option>
+                                    <option value="DevOps">DevOps</option>
+                                    <option value="Data Science">Data Science</option>
+                                    <option value="UI/UX">UI/UX</option>
+                                    <option value="QA/Testes">QA/Testes</option>
+                                    <option value="Cybersecurity">Cybersecurity</option>
+                                    <option value="Cloud">Cloud</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="empresa_atual" class="form-label">
+                                <i class="fas fa-building"></i> Empresa Atual
+                            </label>
+                            <input type="text" class="form-control" id="empresa_atual" name="empresa_atual" 
+                                   placeholder="Nome da empresa onde trabalha">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock"></i> Senha *
+                            </label>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Digite uma senha segura" required>
+                            <small class="form-text text-muted">
+                                <i class="fas fa-info-circle"></i> 
+                                Use esta senha para fazer login na plataforma
+                            </small>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    Aceito os <a href="#" class="text-primary">termos de uso</a> e 
+                                    <a href="#" class="text-primary">política de privacidade</a> *
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-rocket"></i> Confirmar Cadastro
+                            </button>
+                            <a href="{% url 'connect_sync:plans' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Voltar aos Planos
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Benefícios do Plano -->
+            <div class="card border-0 shadow-lg mt-4">
+                <div class="card-header bg-success text-white">
+                    <h5><i class="fas fa-gift"></i> O que você terá acesso</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i> Cupons de desconto</li>
+                                <li><i class="fas fa-check text-success me-2"></i> Fan ID digital</li>
+                                <li><i class="fas fa-check text-success me-2"></i> Acesso antecipado a ingressos</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            {% if plan.name != 'Connect Bronze' %}
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i> Conteúdo gamificado</li>
+                                {% if plan.name == 'Connect Ouro' %}
+                                <li><i class="fas fa-check text-success me-2"></i> Área VIP no aplicativo</li>
+                                <li><i class="fas fa-check text-success me-2"></i> Eventos gratuitos</li>
+                                <li><i class="fas fa-check text-success me-2"></i> Mentorias</li>
+                                {% endif %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

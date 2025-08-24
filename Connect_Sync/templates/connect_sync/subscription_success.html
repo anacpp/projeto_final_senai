@@ -1,0 +1,235 @@
+{% extends 'connect_sync/base.html' %}
+
+{% block content %}
+<!-- Toast para notificação de email -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+    <!-- Toast principal para email -->
+    <div id="emailToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="8000">
+        <div class="toast-header bg-success text-white">
+            <i class="fas fa-envelope me-2"></i>
+            <strong class="me-auto">Email de Acesso Enviado!</strong>
+            <small>agora mesmo</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            <div class="d-flex align-items-start">
+                <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                <div>
+                    <strong>Verifique seu email!</strong><br>
+                    Enviamos as credenciais de acesso da área de membros para:<br>
+                    <span class="badge bg-light text-dark">{{ subscription.member.email }}</span>
+                    <br><small class="text-muted mt-1">💡 Não esqueca de verificar a pasta de spam</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast para mensagens do Django (se houver) -->
+    {% if messages %}
+    {% for message in messages %}
+    <div class="toast message-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
+        <div class="toast-header bg-{% if message.tags == 'success' %}success{% elif message.tags == 'info' %}info{% elif message.tags == 'warning' %}warning{% else %}danger{% endif %} text-white">
+            <i class="fas fa-{% if message.tags == 'success' %}check{% elif message.tags == 'info' %}info-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}times-circle{% endif %} me-2"></i>
+            <strong class="me-auto">{{ message.tags|title }}</strong>
+            <small>agora</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            {{ message }}
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <!-- Mensagem de Sucesso -->
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle fa-5x text-success"></i>
+                    </div>
+                    
+                    <h1 class="display-4 fw-bold text-success mb-4">
+                        Parabéns!
+                    </h1>
+                    
+                    <h3 class="mb-4">
+                        Seu cadastro foi realizado com sucesso!
+                    </h3>
+                    
+                    <div class="alert alert-success mb-4">
+                        <h5><i class="fas fa-crown"></i> Plano Ativo</h5>
+                        <p class="mb-0">
+                            <strong>{{ subscription.plan.name }}</strong> - 
+                            R$ {{ subscription.plan.monthly_price }}/mês
+                        </p>
+                    </div>
+                    
+                    <div class="row text-start">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-user text-primary"></i> Dados do Membro</h5>
+                            <p><strong>Nome:</strong> {{ subscription.member.full_name }}</p>
+                            <p><strong>Email:</strong> {{ subscription.member.email }}</p>
+                            <p><strong>Área:</strong> {{ subscription.member.area_tecnologia }}</p>
+                            {% if subscription.member.empresa_atual %}
+                            <p><strong>Empresa:</strong> {{ subscription.member.empresa_atual }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-calendar text-primary"></i> Assinatura</h5>
+                            <p><strong>Início:</strong> {{ subscription.started_at|date:"d/m/Y" }}</p>
+                            <p><strong>Status:</strong> 
+                                <span class="badge bg-success">{{ subscription.get_status_display }}</span>
+                            </p>
+                            <p><strong>Próximo pagamento:</strong> {{ subscription.next_billing|date:"d/m/Y" }}</p>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <h5><i class="fas fa-envelope text-primary"></i> Próximos Passos</h5>
+                            <div class="alert alert-info text-start">
+                                <ul class="mb-0">
+                                    <li class="email-info" style="cursor: pointer;" title="Clique para ver novamente a notificação de email">
+                                        📧 Enviamos um email de confirmação para <strong>{{ subscription.member.email }}</strong>
+                                        <small class="text-muted">(clique para reexibir notificação)</small>
+                                    </li>
+                                    <li>🆔 Seu Fan ID digital estará disponível em breve</li>
+                                    <li>🔔 Você receberá notificações sobre eventos exclusivos</li>
+                                    <li>👤 Acesse nossa área de membros para ver todos os benefícios</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                        <a href="{% url 'connect_sync:home' %}" class="btn btn-primary btn-lg me-md-2">
+                            <i class="fas fa-home"></i> Ir para Home
+                        </a>
+                        <a href="{% url 'connect_sync:plans' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-crown"></i> Ver Planos
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card de Benefícios -->
+            <div class="card border-0 shadow-lg mt-4">
+                <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-gift"></i> Seus Benefícios Ativos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Cupons de desconto em lojas parceiras</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Fan ID digital personalizado</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Acesso antecipado a ingressos</span>
+                            </div>
+                        </div>
+                        {% if subscription.plan.name != 'Connect Bronze' %}
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Conteúdo gamificado exclusivo</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if subscription.plan.name == 'Connect Ouro' %}
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Área VIP no aplicativo</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Acesso gratuito a eventos</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Sessões de mentoria</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Verificar se Bootstrap está disponível
+    if (typeof bootstrap !== 'undefined') {
+        // Mostrar toast de email automaticamente
+        var emailToastElement = document.getElementById('emailToast');
+        if (emailToastElement) {
+            var emailToast = new bootstrap.Toast(emailToastElement);
+            setTimeout(function() {
+                emailToast.show();
+            }, 1000);
+        }
+        
+        // Mostrar toasts de mensagens Django (se houver)
+        var messageToasts = document.querySelectorAll('.message-toast');
+        messageToasts.forEach(function(toastElement, index) {
+            setTimeout(function() {
+                var toast = new bootstrap.Toast(toastElement);
+                toast.show();
+            }, 1500 + (index * 300));
+        });
+        
+        // Permitir reexibir toast clicando no item de email
+        document.addEventListener('click', function(e) {
+            if(e.target.closest('.email-info')) {
+                if (emailToastElement) {
+                    var emailToast = new bootstrap.Toast(emailToastElement);
+                    emailToast.show();
+                }
+            }
+        });
+    }
+    
+    // Adicionar efeito de hover no item clicável
+    var emailInfo = document.querySelector('.email-info');
+    if(emailInfo) {
+        emailInfo.addEventListener('mouseenter', function() {
+            this.style.backgroundColor = '#e3f2fd';
+            this.style.borderRadius = '4px';
+            this.style.padding = '2px 4px';
+            this.style.transition = 'all 0.3s ease';
+        });
+        
+        emailInfo.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = 'transparent';
+            this.style.padding = '0';
+        });
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

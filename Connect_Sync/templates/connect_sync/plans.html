@@ -1,0 +1,134 @@
+{% extends 'connect_sync/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-12 text-center mb-5">
+            <h1 class="display-4 fw-bold">
+                <i class="fas fa-crown"></i> Planos de Membership
+            </h1>
+            <p class="lead">Escolha o plano ideal para acelerar sua carreira em tecnologia</p>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        {% for plan in plans %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-0 shadow-lg h-100 card-hover d-flex flex-column {% if plan.name == 'Connect Ouro' %}border-warning{% endif %}">
+                {% if plan.name == 'Connect Ouro' %}
+                <div class="card-header bg-warning text-center">
+                    <i class="fas fa-star"></i> Mais Popular
+                </div>
+                {% endif %}
+                
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-3">
+                        <i class="fas fa-crown fa-3x {% if plan.name == 'Connect Bronze' %}plan-bronze{% elif plan.name == 'Connect Prata' %}plan-prata{% elif plan.name == 'Connect Ouro' %}plan-ouro{% endif %}"></i>
+                    </div>
+                    
+                    <h3 class="card-title fw-bold">{{ plan.name }}</h3>
+                    
+                    <div class="price-section mb-4">
+                        <h2 class="display-5 fw-bold text-primary">
+                            R$ {{ plan.monthly_price }}
+                            <small class="fs-6 text-muted">/mês</small>
+                        </h2>
+                        {% if plan.annual_price %}
+                        <p class="text-muted">
+                            ou R$ {{ plan.annual_price }}/ano 
+                            <small class="badge bg-success">Economize 20%</small>
+                        </p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Benefícios do Plano -->
+                    <div class="benefits-list text-start mb-4 flex-grow-1">
+                        <h6 class="fw-bold text-center mb-3">
+                            <i class="fas fa-gift"></i> Benefícios Inclusos
+                        </h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Cupons de desconto de lojas parceiras
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Fan ID digital
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Acesso antecipado a ingressos
+                            </li>
+                            {% if plan.name != 'Connect Bronze' %}
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Conteúdo gamificado
+                            </li>
+                            {% endif %}
+                            {% if plan.name == 'Connect Ouro' %}
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Área VIP no aplicativo
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Acesso gratuito para eventos
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Mentorias exclusivas
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    
+                    <!-- Botão sempre no final -->
+                    <div class="mt-auto">
+                        <div class="d-grid">
+                            <a href="{% url 'connect_sync:signup' plan.id %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-rocket"></i> Escolher Plano
+                            </a>
+                        </div>
+                    </div>
+                </div>                <div class="card-footer bg-transparent text-center">
+                    <small class="text-muted">
+                        <i class="fas fa-shield-alt"></i> Cancele quando quiser
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Nenhum plano disponível no momento.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Seção para membros existentes -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card bg-light border-0">
+                <div class="card-body text-center p-4">
+                    <h5 class="text-primary mb-3">
+                        <i class="fas fa-user-check me-2"></i>
+                        Já é membro Connect Sync?
+                    </h5>
+                    <p class="text-muted mb-3">
+                        Faça login para acessar seu dashboard e gerenciar sua assinatura
+                    </p>
+                    <a href="{% url 'connect_sync:login' %}" class="btn btn-outline-primary btn-lg me-3">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        Fazer Login
+                    </a>
+                    <a href="{% url 'connect_sync:about' %}" class="btn btn-link">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Saiba mais sobre a Connect Sync
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
