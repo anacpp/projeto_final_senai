@@ -1,4 +1,4 @@
-#Projeto Final - SENAI
+## Projeto Final - SENAI
 
 ## 📌 Connect-Sync
 
