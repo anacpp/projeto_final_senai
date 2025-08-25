@@ -1,7 +1,10 @@
+"""
+Configuração do painel administrativo Django para gerenciar todos os modelos da aplicação Connect Sync.
+Define como os modelos são exibidos, filtrados e pesquisados no admin.
+"""
+
 from django.contrib import admin
 from .models import User, Member, Plan, Subscription, Evento, Ticket, Payment, Benefit, BenefitRedemption
-
-# Register your models here.
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ['username', 'email', 'first_name', 'last_name', 'is_active', 'date_joined']
@@ -43,7 +46,6 @@ class BenefitRedemptionAdmin(admin.ModelAdmin):
     list_display = ['member', 'benefit', 'redeemed_at', 'used']
     list_filter = ['used', 'redeemed_at']
 
-# Registrar todos os modelos usando admin.site.register()
 admin.site.register(User, UserAdmin)
 admin.site.register(Member, MemberAdmin)
 admin.site.register(Plan, PlanAdmin)

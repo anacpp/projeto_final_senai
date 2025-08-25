@@ -135,7 +135,7 @@ python manage.py migrate
 
 ## 👥 Equipe de Desenvolvimento
 
-Este projeto foi desenvolvido como **Projeto Integrador** do curso técnico em Desenvolvimento de Sistemas do SENAI.
+Este projeto foi desenvolvido como **Projeto Integrador** do curso de Desenvolvimento Back-end do SENAI.
 
 ### 👨‍💻 Desenvolvedores
 - **Ana Carla Cesar Pereira** - Desenvolvimento Full Stack
@@ -149,14 +149,6 @@ Este projeto é de **caráter acadêmico** e foi desenvolvido como Projeto Integ
 
 ---
 
-## 🤝 Contribuindo
-
-1. Fork o projeto
-2. Crie sua feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
 ## 📞 Suporte
 
 Se você tiver problemas para executar o projeto:
@@ -164,7 +156,7 @@ Se você tiver problemas para executar o projeto:
 1. ✅ Certifique-se de ter executado `python setup_initial_data.py`
 2. ✅ Verifique se o ambiente virtual está ativo
 3. ✅ Confirme que as dependências foram instaladas
-4. 📧 Entre em contato com a equipe de desenvolvimento
+
 
 ---
 

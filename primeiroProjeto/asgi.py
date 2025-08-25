@@ -1,10 +1,6 @@
 """
-ASGI config for primeiroProjeto project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.2/howto/deployment/asgi/
+Configuração ASGI para o projeto Connect Sync.
+Expõe a aplicação ASGI como variável para servidores assíncronos.
 """
 
 import os

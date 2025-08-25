@@ -1,13 +1,16 @@
+"""
+Modelos de dados da aplicação Connect Sync.
+Define a estrutura do banco de dados para membros, planos, assinaturas, eventos, pagamentos e benefícios.
+Implementa relacionamentos e métodos necessários para o funcionamento da plataforma.
+"""
+
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 import uuid
 import hashlib
 
-# Create your models here.
-
 class User(models.Model):
-    """Modelo User customizado conforme solicitado pelo professor"""
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=255)
@@ -28,21 +31,16 @@ class User(models.Model):
         return self.username
 
 class Member(models.Model):
-    """Modelo baseado no diagrama - Membro do clube"""
-    # Relacionamento com usuário customizado
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     
-    # Campos principais do diagrama
     full_name = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=20, blank=True)
     password_hash = models.CharField(max_length=255, blank=True)
     
-    # Dados profissionais
     area_tecnologia = models.CharField(max_length=50, blank=True)
     empresa_atual = models.CharField(max_length=200, blank=True)
     
-    # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -55,23 +53,17 @@ class Member(models.Model):
         return self.full_name
 
     def register(self):
-        """Método do diagrama - registrar membro"""
-        # Lógica de registro
         pass
 
     def login(self):
-        """Método do diagrama - login do membro"""
-        # Lógica de login
         pass
 
 
 class Plan(models.Model):
-    """Modelo baseado no diagrama - Planos de membership"""
     name = models.CharField(max_length=50, unique=True)
     monthly_price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
     
-    # Campos extras para funcionalidades
     annual_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     color_theme = models.CharField(max_length=7, default='#007bff')
     active = models.BooleanField(default=True)
@@ -87,12 +79,10 @@ class Plan(models.Model):
         return self.name
 
     def getBenefits(self):
-        """Método do diagrama - obter benefícios do plano"""
         return self.benefits.filter(active=True)
 
 
 class Subscription(models.Model):
-    """Modelo baseado no diagrama - Assinatura do membro"""
     STATUS_CHOICES = [
         ('active', 'Active'),
         ('inactive', 'Inactive'),
@@ -119,32 +109,27 @@ class Subscription(models.Model):
         return f"{self.member.full_name} - {self.plan.name}"
 
     def renew(self):
-        """Método do diagrama - renovar assinatura"""
         from datetime import timedelta
         if self.auto_renew and self.status == 'active':
             self.next_billing = timezone.now() + timedelta(days=30)
             self.save()
 
     def cancel(self):
-        """Método do diagrama - cancelar assinatura"""
         self.status = 'cancelled'
         self.ended_at = timezone.now()
         self.save()
 
 
 class Evento(models.Model):
-    """Modelo baseado no diagrama (era Game) - Eventos tech"""
     title = models.CharField(max_length=200)
     event_date = models.DateTimeField()
     location = models.CharField(max_length=300)
     description = models.TextField()
     
-    # Campos específicos para eventos tech
-    speaker = models.CharField(max_length=200, blank=True)  # Era "opponent" no diagrama
+    speaker = models.CharField(max_length=200, blank=True)
     event_type = models.CharField(max_length=50, default='Tech Talk')
     max_attendees = models.IntegerField(null=True, blank=True)
     
-    # Controle de acesso
     requires_membership = models.BooleanField(default=True)
     allowed_plans = models.ManyToManyField(Plan, blank=True)
     
@@ -160,13 +145,11 @@ class Evento(models.Model):
 
 
 class Ticket(models.Model):
-    """Modelo baseado no diagrama - Ingressos para eventos"""
     owner = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='tickets')
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE, related_name='tickets')
     seat = models.CharField(max_length=20, blank=True)
     qr_code = models.CharField(max_length=100, unique=True)
     
-    # Campos extras
     purchased_at = models.DateTimeField(auto_now_add=True)
     used = models.BooleanField(default=False)
     used_at = models.DateTimeField(null=True, blank=True)
@@ -181,13 +164,10 @@ class Ticket(models.Model):
         return f"{self.owner.full_name} - {self.evento.title}"
 
     def purchase(self):
-        """Método do diagrama - comprar ingresso"""
-        # Gerar QR code único
         self.qr_code = hashlib.md5(f"{self.owner.id}-{self.evento.id}-{timezone.now()}".encode()).hexdigest()
         self.save()
 
     def validateQR(self):
-        """Método do diagrama - validar QR code"""
         if not self.used:
             self.used = True
             self.used_at = timezone.now()
@@ -197,7 +177,6 @@ class Ticket(models.Model):
 
 
 class Payment(models.Model):
-    """Modelo baseado no diagrama - Pagamentos"""
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('completed', 'Completed'),
@@ -232,20 +211,18 @@ class Payment(models.Model):
         return f"{self.member.full_name} - R$ {self.amount} - {self.get_status_display()}"
 
     def process(self):
-        """Método do diagrama - processar pagamento"""
-        # Lógica de processamento do pagamento
+        
         self.status = 'completed'
         self.processed_at = timezone.now()
         self.save()
 
 
 class Benefit(models.Model):
-    """Modelo baseado no diagrama - Benefícios/Códigos de desconto"""
+    
     title = models.CharField(max_length=200)
     description = models.TextField()
     provider = models.CharField(max_length=200)  # Empresa parceira
     
-    # Campos específicos para códigos
     discount_code = models.CharField(max_length=50, unique=True)
     discount_percentage = models.IntegerField()
     redeem_url = models.URLField()
@@ -270,9 +247,9 @@ class Benefit(models.Model):
         return f"{self.title} - {self.discount_percentage}% OFF"
 
     def redeem(self, member):
-        """Método do diagrama - resgatar benefício"""
+        
         if self.can_redeem():
-            # Criar registro de resgate
+            
             BenefitRedemption.objects.create(
                 member=member,
                 benefit=self,
@@ -284,7 +261,7 @@ class Benefit(models.Model):
         return False
 
     def can_redeem(self):
-        """Verifica se pode ser resgatado"""
+        
         now = timezone.now()
         if not self.active:
             return False
@@ -296,7 +273,7 @@ class Benefit(models.Model):
 
 
 class BenefitRedemption(models.Model):
-    """Modelo para controlar resgates de benefícios"""
+   
     member = models.ForeignKey(Member, on_delete=models.CASCADE)
     benefit = models.ForeignKey(Benefit, on_delete=models.CASCADE)
     redeemed_at = models.DateTimeField(auto_now_add=True)

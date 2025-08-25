@@ -1,10 +1,6 @@
 """
-WSGI config for primeiroProjeto project.
-
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.2/howto/deployment/wsgi/
+Configuração WSGI para o projeto Connect Sync.
+Expõe a aplicação WSGI como variável para servidores web.
 """
 
 import os

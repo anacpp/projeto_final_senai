@@ -1,3 +1,5 @@
-from django.test import TestCase
+"""
+Testes unitários para a aplicação Connect Sync.
+"""
 
-# Create your tests here.
+from django.test import TestCase

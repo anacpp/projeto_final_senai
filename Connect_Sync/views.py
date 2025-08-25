@@ -1,3 +1,9 @@
+"""
+Views da aplicação Connect Sync para gerenciar autenticação de membros, 
+exibição de planos, cadastros, dashboard pessoal e gerenciamento de assinaturas.
+Implementa sistema de autenticação baseado em sessões.
+"""
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -11,13 +17,10 @@ from datetime import timedelta
 from .models import Plan, Member, Subscription
 
 def home_view(request):
-    """View para a página inicial com estatísticas dinâmicas"""
-    # Estatísticas da plataforma
     total_members = Member.objects.count()
     active_subscriptions = Subscription.objects.filter(status='active').count()
     available_plans = Plan.objects.filter(active=True).count()
     
-    # Planos para preview (máximo 3)
     plans = Plan.objects.filter(active=True).order_by('order')[:3]
     
     context = {
@@ -32,20 +35,16 @@ def home_view(request):
     return render(request, 'connect_sync/home.html', context)
 
 def plans_view(request):
-    """View para exibir todos os planos disponíveis"""
     plans = Plan.objects.filter(active=True).order_by('order')
     return render(request, 'connect_sync/plans.html', {'plans': plans})
 
 def about_view(request):
-    """View para página sobre"""
     return render(request, 'connect_sync/about.html')
 
 def signup_view(request, plan_id):
-    """View para cadastro de novo membro com plano selecionado"""
     plan = get_object_or_404(Plan, id=plan_id)
     
     if request.method == 'POST':
-        # Processar dados do formulário
         full_name = request.POST.get('full_name')
         email = request.POST.get('email')
         phone = request.POST.get('phone', '')
@@ -53,18 +52,15 @@ def signup_view(request, plan_id):
         empresa_atual = request.POST.get('empresa_atual', '')
         password = request.POST.get('password')
         
-        # Validação básica
         if not full_name or not email or not area_tecnologia or not password:
             messages.error(request, 'Por favor, preencha todos os campos obrigatórios.')
             return render(request, 'connect_sync/signup.html', {'plan': plan})
         
-        # Verificar se email já existe
         if Member.objects.filter(email=email).exists():
             messages.error(request, 'Este email já está cadastrado.')
             return render(request, 'connect_sync/signup.html', {'plan': plan})
         
         try:
-            # Criar novo membro
             member = Member.objects.create(
                 full_name=full_name,
                 email=email,
@@ -73,16 +69,13 @@ def signup_view(request, plan_id):
                 empresa_atual=empresa_atual
             )
             
-            # Definir senha para o membro (você pode usar hash aqui)
-            member.password_hash = password  # Em produção, use hash adequado
+            member.password_hash = password
             member.save()
             
-            # Calcular próxima data de cobrança (30 dias a partir de hoje)
             from datetime import timedelta
             from django.utils import timezone
             next_billing_date = timezone.now() + timedelta(days=30)
             
-            # Criar assinatura
             subscription = Subscription.objects.create(
                 member=member,
                 plan=plan,
@@ -101,7 +94,6 @@ def signup_view(request, plan_id):
     return render(request, 'connect_sync/signup.html', {'plan': plan})
 
 def login_view(request):
-    """View para login do membro"""
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -111,12 +103,9 @@ def login_view(request):
             return render(request, 'connect_sync/login.html')
         
         try:
-            # Buscar membro pelo email
             member = Member.objects.get(email=email)
             
-            # Verificar senha (em produção, use hash adequado)
             if member.password_hash == password:
-                # Criar sessão do membro
                 request.session['member_id'] = member.id
                 request.session['member_name'] = member.full_name
                 
@@ -131,13 +120,11 @@ def login_view(request):
     return render(request, 'connect_sync/login.html')
 
 def logout_view(request):
-    """View para logout do membro"""
     request.session.flush()
     messages.success(request, 'Você foi desconectado com sucesso!')
     return redirect('connect_sync:home')
 
 def member_dashboard(request):
-    """Dashboard do membro logado"""
     member_id = request.session.get('member_id')
     if not member_id:
         messages.error(request, 'Você precisa estar logado para acessar esta página.')
@@ -153,7 +140,6 @@ def member_dashboard(request):
     return render(request, 'connect_sync/member_dashboard.html', context)
 
 def member_edit_personal_view(request):
-    """View para o membro editar seus próprios dados"""
     member_id = request.session.get('member_id')
     if not member_id:
         messages.error(request, 'Você precisa estar logado para acessar esta página.')
@@ -162,25 +148,21 @@ def member_edit_personal_view(request):
     member = get_object_or_404(Member, id=member_id)
     
     if request.method == 'POST':
-        # Processar dados do formulário
         full_name = request.POST.get('full_name')
         email = request.POST.get('email')
         phone = request.POST.get('phone', '')
         area_tecnologia = request.POST.get('area_tecnologia')
         empresa_atual = request.POST.get('empresa_atual', '')
         
-        # Validação básica
         if not full_name or not email or not area_tecnologia:
             messages.error(request, 'Por favor, preencha todos os campos obrigatórios.')
             return render(request, 'connect_sync/member_edit_personal.html', {'member': member})
         
-        # Verificar se email já existe (exceto o próprio membro)
         if Member.objects.filter(email=email).exclude(id=member.id).exists():
             messages.error(request, 'Este email já está sendo usado por outro membro.')
             return render(request, 'connect_sync/member_edit_personal.html', {'member': member})
         
         try:
-            # Atualizar dados do membro
             member.full_name = full_name
             member.email = email
             member.phone = phone
@@ -188,7 +170,6 @@ def member_edit_personal_view(request):
             member.empresa_atual = empresa_atual
             member.save()
             
-            # Atualizar nome na sessão
             request.session['member_name'] = member.full_name
             
             messages.success(request, 'Perfil atualizado com sucesso!')
@@ -200,7 +181,6 @@ def member_edit_personal_view(request):
     return render(request, 'connect_sync/member_edit_personal.html', {'member': member})
 
 def member_subscription_manage_view(request):
-    """View para o membro gerenciar sua própria assinatura"""
     member_id = request.session.get('member_id')
     if not member_id:
         messages.error(request, 'Você precisa estar logado para acessar esta página.')
@@ -219,7 +199,6 @@ def member_subscription_manage_view(request):
 
 @require_POST
 def member_change_plan_view(request):
-    """View para o membro trocar seu próprio plano"""
     member_id = request.session.get('member_id')
     if not member_id:
         messages.error(request, 'Você precisa estar logado para acessar esta página.')
@@ -249,7 +228,6 @@ def member_change_plan_view(request):
 
 @require_POST
 def member_cancel_subscription_view(request):
-    """View para o membro cancelar sua própria assinatura"""
     member_id = request.session.get('member_id')
     if not member_id:
         messages.error(request, 'Você precisa estar logado para acessar esta página.')
@@ -274,7 +252,6 @@ def member_cancel_subscription_view(request):
 @require_POST
 @csrf_protect
 def member_delete_account_view(request):
-    """View para o membro excluir sua própria conta"""
     member_id = request.session.get('member_id')
     if not member_id:
         messages.error(request, 'Você precisa estar logado para acessar esta página.')
@@ -283,15 +260,12 @@ def member_delete_account_view(request):
     member = get_object_or_404(Member, id=member_id)
     
     try:
-        # Cancelar todas as assinaturas ativas primeiro
         active_subscriptions = member.subscriptions.filter(status='active')
         for subscription in active_subscriptions:
             subscription.cancel()
         
-        # Limpar sessão
         request.session.flush()
         
-        # Excluir o membro
         member_name = member.full_name
         member.delete()
         
@@ -303,6 +277,5 @@ def member_delete_account_view(request):
         return redirect('connect_sync:member_dashboard')
 
 def subscription_success_view(request, subscription_id):
-    """View para página de sucesso após cadastro"""
     subscription = get_object_or_404(Subscription, id=subscription_id)
     return render(request, 'connect_sync/subscription_success.html', {'subscription': subscription})

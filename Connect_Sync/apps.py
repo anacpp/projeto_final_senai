@@ -1,3 +1,7 @@
+"""
+Configuração da aplicação Connect Sync para Django.
+"""
+
 from django.apps import AppConfig
 
 
